@@ -445,9 +445,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 10
   speed: 5
-  dash_time: 0.3
-  dash_cooltime: 2
-  dash_speed_multifly: 2
+  dash_time: 0.2
+  dash_cooltime: 1
+  dash_speed_multifly: 3
 --- !u!4 &2009271259
 Transform:
   m_ObjectHideFlags: 0
