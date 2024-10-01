@@ -20,5 +20,6 @@ public class SwordControl : MonoBehaviour
 
         // 부모 오브젝트(칼 본체)의 회전을 자식(pivot)을 기준으로 변경
         this.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+
     }
 }
