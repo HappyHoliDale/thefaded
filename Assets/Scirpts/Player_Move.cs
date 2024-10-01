@@ -9,6 +9,8 @@ public class Player_Move : MonoBehaviour
     [Header("플레이어 상태")]
     public float hp = 10f;
     public float speed = 5f;
+    public float getDamageCool = 1f;
+    bool damaged = false;
 
 
     [Header("대쉬")]
@@ -35,6 +37,15 @@ public class Player_Move : MonoBehaviour
     {
         Dash();
     }
+    void Move()
+    {
+        if (dashing) return;
+
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        rb.velocity = new Vector2(x, y).normalized * speed;
+    }
     void Dash()
     {
         if (dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
@@ -53,15 +64,6 @@ public class Player_Move : MonoBehaviour
         yield return new WaitForSeconds(dash_cooltime);
         dashable = true;
     }
-    void Move()
-    {
-        if (dashing) return;
-
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-
-        rb.velocity = new Vector2(x, y).normalized * speed;
-    }
     void Rotate()
     {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -73,11 +75,22 @@ public class Player_Move : MonoBehaviour
 
         if ((angle >= 90) || (angle <= -90))
         {
-            render.flipY = true;
+            render.flipX = true;
         }
         else if ((angle < 90) || (angle > -90))
         {
-            render.flipY = false;
+            render.flipX = false;
         }
+    }
+    public void GetDamage(float damage)
+    {
+        if (damaged) return;
+        damaged = true;
+        hp -= damage;
+        Invoke("GetDamageCool", getDamageCool);
+    }
+    void GetDamageCool()
+    {
+        damaged = false;
     }
 }
