@@ -6,9 +6,8 @@ public class PlayerAttack : MonoBehaviour
 {
     Animator animator;
     Rigidbody2D rb;
-    [SerializeField] float speed = 3;
     private float curTime;
-    private float cooltime = 1f;
+    private float cooltime = 0.5f;
     public Transform pos;
     public Vector2 boxSize;
 
@@ -30,14 +29,15 @@ public class PlayerAttack : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 //Collider2D[] collider2Ds = Physic2D.OverlapBoxAll()
-                animator.SetTrigger("ATK");
+                animator.SetTrigger("atk");
                 curTime = cooltime;
             }
+            
 
-            else
-            {
-                curTime = Time.deltaTime;
-            }
+        }
+        else
+        {
+            curTime -= Time.deltaTime;
         }
     }
 }
