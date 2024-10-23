@@ -114,7 +114,7 @@ public class Enemy_move : MonoBehaviour
                         if (thrdLaser1.collider == null && thrdLaser2.collider == null)
                         {
                             flag++;
-                            if (Vector2.Distance(pos, secPos) + Vector2.Distance(secPos, target.transform.position) < finallDist || i == 0)
+                            if (Vector2.Distance(pos, secPos) + Vector2.Distance(secPos, target.transform.position) < finallDist + 0.3f || i == 0)
                             {
                                 finPos = secPos;
                                 findir = secDirection;
@@ -150,7 +150,7 @@ public class Enemy_move : MonoBehaviour
             isChasing = false;
         if (Vector2.Distance(transform.position, target.position) < findDist)
         {
-            Vector2 lossy = transform.lossyScale;
+            // Vector2 lossy = transform.lossyScale;
             Vector2 pos = (Vector2)transform.position;
 
             Vector2 direction = new Vector2(target.position.x - pos.x, target.position.y - pos.y).normalized; // 이걸 각각 계산해서 플레이어 중앙으로 함 해보기
