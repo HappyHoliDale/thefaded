@@ -28,16 +28,24 @@ public class PlayerAttack : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //Collider2D[] collider2Ds = Physic2D.OverlapBoxAll()
-                animator.SetTrigger("atk");
+                Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+                foreach (Collider2D collider in collider2Ds) 
+                {
+                    Debug.Log(collider.tag);
+                }
                 curTime = cooltime;
             }
-            
-
+       
         }
         else
         {
             curTime -= Time.deltaTime;
         }
+    }
+        
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(pos.position, boxSize);
     }
 }
