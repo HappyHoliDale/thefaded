@@ -25,6 +25,8 @@ public class Player_Move : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("hp:" + hp);
+
         rb = GetComponent<Rigidbody2D>();
         render = GetComponent<SpriteRenderer>();
     }
@@ -87,6 +89,8 @@ public class Player_Move : MonoBehaviour
         if (damaged) return;
         damaged = true;
         hp -= damage;
+        Debug.Log("hp:" + hp);
+
         Invoke("GetDamageCool", getDamageCool);
     }
     void GetDamageCool()
