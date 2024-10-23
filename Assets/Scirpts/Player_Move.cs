@@ -49,7 +49,7 @@ public class Player_Move : MonoBehaviour
     void Dash()
     {
         if (dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
-            StartCoroutine("Dashing");
+            StartCoroutine(Dashing());
     }
     IEnumerator Dashing()
     {
