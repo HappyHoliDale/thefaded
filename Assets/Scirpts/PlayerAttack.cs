@@ -20,6 +20,7 @@ public class PlayerAttack : MonoBehaviour
     void Update()
     {
         Attack();
+        AttackPosition();
     }
 
     private void Attack()
@@ -42,7 +43,26 @@ public class PlayerAttack : MonoBehaviour
             curTime -= Time.deltaTime;
         }
     }
-        
+
+    public void AttackPosition()
+    {
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            pos.localPosition = new Vector2(0, 0.1f);
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            pos.localPosition = new Vector2(0, -0.1f);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            pos.localPosition = new Vector2(0.1f, 0f);
+        }
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            pos.localPosition = new Vector2(-0.1f, 0f);
+        }
+    }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
