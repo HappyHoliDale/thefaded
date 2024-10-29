@@ -46,26 +46,43 @@ public class PlayerAttack : MonoBehaviour
 
     public void AttackPosition()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if(Input.GetKey(KeyCode.W)
+        if (Input.GetKey(KeyCode.W))
         {
             pos.localPosition = new Vector2(0, 0.1f);
+            pos.rotation = Quaternion.Euler(0, 0, 90);
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.S))
         {
             pos.localPosition = new Vector2(0, -0.1f);
+            pos.rotation = Quaternion.Euler(0, 0, 90);
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.D))
         {
             pos.localPosition = new Vector2(0.1f, 0f);
+            pos.rotation = Quaternion.Euler(0, 0, 0);
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.A))
         {
             pos.localPosition = new Vector2(-0.1f, 0f);
+            pos.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(pos.position, boxSize);
+
+        // 기존 Matrix를 저장
+        Matrix4x4 originalMatrix = Gizmos.matrix;
+
+        // pos의 위치와 회전을 반영한 Matrix 설정
+        Gizmos.matrix = Matrix4x4.TRS(pos.position, pos.rotation, Vector3.one);
+
+        // 회전된 상태로 WireCube 그리기
+        Gizmos.DrawWireCube(Vector3.zero, boxSize);
+
+        // Matrix를 원래 상태로 되돌리기
+        Gizmos.matrix = originalMatrix;
     }
+
 }
