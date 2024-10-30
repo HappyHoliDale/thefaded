@@ -37,7 +37,7 @@ public class SkillTree : MonoBehaviour
     {
         skillTree.AddSkill("Dash", "Attack");
         skillTree.AddSkill("Dash", "Paring");
-        skillTree.AddSkill("Paring", "ReA");
+        skillTree.AddSkill("Attack", "ReA");
     }
 
     // 패널 만드는부분임
@@ -117,18 +117,25 @@ public class SkillTree : MonoBehaviour
 
 class Node
 {
+    public int under;
     public string name;
     public Node parent;
     public List<Node> children;
     public Node(string name)
     {
         this.name = name;
+        under = 0;
         children = new List<Node>();
     }
     public void AddChild(Node child)
     {
         children.Add(child);
+        under++;
         child.parent = this;
+        if (parent != null)
+        {
+            parent.under++;
+        }
     }
 }
 class Tree
