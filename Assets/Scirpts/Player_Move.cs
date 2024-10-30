@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class Player_Move : MonoBehaviour
 {
+    public bool _attack = false;
+    public bool _dash = false;
+
+
     [Header("플레이어 상태")]
     public float hp = 10f;
     public float speed = 5f;
@@ -50,7 +54,7 @@ public class Player_Move : MonoBehaviour
     }
     void Dash()
     {
-        if (dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
+        if (_dash && dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
             StartCoroutine(Dashing());
     }
     IEnumerator Dashing()
