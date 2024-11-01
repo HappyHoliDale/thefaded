@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class Player_Move : MonoBehaviour
 {
+    public bool _attack = false;
+    public bool _dash = false;
+
+
     [Header("플레이어 상태")]
     public float hp = 10f;
     public float speed = 5f;
@@ -25,6 +29,8 @@ public class Player_Move : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("hp:" + hp);
+
         rb = GetComponent<Rigidbody2D>();
         render = GetComponent<SpriteRenderer>();
     }
@@ -48,7 +54,7 @@ public class Player_Move : MonoBehaviour
     }
     void Dash()
     {
-        if (dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
+        if (_dash && dashable && Input.GetKeyDown(KeyCode.Space) && rb.velocity != Vector2.zero)
             StartCoroutine(Dashing());
     }
     IEnumerator Dashing()
@@ -87,6 +93,8 @@ public class Player_Move : MonoBehaviour
         if (damaged) return;
         damaged = true;
         hp -= damage;
+        Debug.Log("hp:" + hp);
+
         Invoke("GetDamageCool", getDamageCool);
     }
     void GetDamageCool()

@@ -6,18 +6,27 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Enemy_move : MonoBehaviour
+public class Enemy_Control : MonoBehaviour
 {
     [Header("속도")]
-    public float idle_speed = 1f;
-    public float chasing_speed = 3f;
+    public float idle_speed = 1f; // 혼자 움직임
+    public float chasing_speed = 3f; // 추격 움직임
 
     [Header("감지")]
-    public float findDist = 5f;
-    public float attackDist = 3f;
-    public float missDist = 8f;
+    public float findDist = 5f; // 색적거리
+    public float missDist = 8f; // 놓침거리
     private bool isChasing = false;
     private bool startCoroutine = false;
+
+    [Header("공격")]
+    public float damage = 1f;
+    public float attackDist = 3f; // 공격범위
+    public float attackDelay = 0.5f; // 공격 범위 들어오고 공격 하기까지 시간
+    public float attackCool = 2f; // 공격 뒤 재공격가지 쿨타임
+    private bool attackAble = false;
+
+    [Header("기타")]
+    public bool reversed = false; // 스프라이트 좌우반전
 
     Transform target;
     Rigidbody2D rb;
@@ -27,7 +36,7 @@ public class Enemy_move : MonoBehaviour
         target = GameObject.FindWithTag("Player").transform;
         // defaultLayerMask = LayerMask.GetMask("Default");
         rb = GetComponent<Rigidbody2D>();
-
+        StartCoroutine(Attack());
     }
     void FixedUpdate()
     {
@@ -36,6 +45,10 @@ public class Enemy_move : MonoBehaviour
     }
     void Move()
     {
+        if (rb.velocity.x > 0)
+            rb.GetComponent<SpriteRenderer>().flipX = reversed ? true : false;
+        else if (rb.velocity.x < 0)
+            rb.GetComponent<SpriteRenderer>().flipX = reversed ? false : true;
         if (isChasing)
         {
             StopCoroutine(IdleMove());
@@ -46,6 +59,20 @@ public class Enemy_move : MonoBehaviour
         {
             startCoroutine = true;
             StartCoroutine(IdleMove());
+        }
+    }
+    IEnumerator Attack()
+    {
+        while (true)
+        {
+            yield return new WaitForFixedUpdate();
+            if (Vector2.Distance(transform.position, target.position) <= attackDist && attackAble)
+            {
+                yield return new WaitForSeconds(attackDelay);
+                if (Vector2.Distance(transform.position, target.position) <= attackDist)
+                    target.GetComponent<Player_Move>().GetDamage(damage);
+                yield return new WaitForSeconds(attackCool);
+            }
         }
     }
     const float cirslide = 0.41421f;
@@ -67,9 +94,9 @@ public class Enemy_move : MonoBehaviour
         new Vector2(cirslide, -1).normalized,
         new Vector2(1, -1).normalized,
     };
-    int flag = 0;
     void FindWayAndMove()
     {
+        int flag = 0;
         Vector2 lossy = transform.lossyScale;
         Vector2 pos = (Vector2)transform.position;
         Vector2 finPos = new Vector2(0, 0);
@@ -86,7 +113,15 @@ public class Enemy_move : MonoBehaviour
         {
             Debug.DrawRay(pos, direction * distance, Color.red);
             if (Vector2.Distance(pos, target.position) > attackDist)
+            {
+                attackAble = false;
                 rb.velocity = new Vector2(target.position.x - pos.x, target.position.y - pos.y).normalized * chasing_speed;
+            }
+            else
+            {
+                rb.velocity = Vector2.zero;
+                attackAble = true;
+            }
         }
         else
         {
@@ -114,7 +149,7 @@ public class Enemy_move : MonoBehaviour
                         if (thrdLaser1.collider == null && thrdLaser2.collider == null)
                         {
                             flag++;
-                            if (Vector2.Distance(pos, secPos) + Vector2.Distance(secPos, target.transform.position) < finallDist || i == 0)
+                            if (Vector2.Distance(pos, secPos) + Vector2.Distance(secPos, target.transform.position) < finallDist + 0.3f || i == 0)
                             {
                                 finPos = secPos;
                                 findir = secDirection;
@@ -150,7 +185,7 @@ public class Enemy_move : MonoBehaviour
             isChasing = false;
         if (Vector2.Distance(transform.position, target.position) < findDist)
         {
-            Vector2 lossy = transform.lossyScale;
+            // Vector2 lossy = transform.lossyScale;
             Vector2 pos = (Vector2)transform.position;
 
             Vector2 direction = new Vector2(target.position.x - pos.x, target.position.y - pos.y).normalized; // 이걸 각각 계산해서 플레이어 중앙으로 함 해보기
