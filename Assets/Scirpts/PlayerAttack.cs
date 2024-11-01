@@ -27,7 +27,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (curTime <= 0)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetKeyDown(KeyCode.I))
             {
                 Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
                 foreach (Collider2D collider in collider2Ds) 
@@ -46,25 +46,28 @@ public class PlayerAttack : MonoBehaviour
 
     public void AttackPosition()
     {
-        if(Input.GetKey(KeyCode.W)
+        if(Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) 
+        { 
+
+        }
         if (Input.GetKey(KeyCode.W))
         {
-            pos.localPosition = new Vector2(0, 0.1f);
+            pos.localPosition = new Vector2(0, 0.9f);
             pos.rotation = Quaternion.Euler(0, 0, 90);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            pos.localPosition = new Vector2(0, -0.1f);
+            pos.localPosition = new Vector2(0, -1f);
             pos.rotation = Quaternion.Euler(0, 0, 90);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            pos.localPosition = new Vector2(0.1f, 0f);
+            pos.localPosition = new Vector2(0.6f, -0.1f);
             pos.rotation = Quaternion.Euler(0, 0, 0);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            pos.localPosition = new Vector2(-0.1f, 0f);
+            pos.localPosition = new Vector2(-0.6f, -0.1f);
             pos.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
