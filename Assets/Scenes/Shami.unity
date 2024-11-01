@@ -663,6 +663,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillPannel: {fileID: 5459290978969633368, guid: 905bce34baad9480395322d2bb85e1c2, type: 3}
+  FirstSkill:
+    SkillName: 
+    SkillParent: Null
+  skills: []
 --- !u!1 &980342764
 GameObject:
   m_ObjectHideFlags: 0
