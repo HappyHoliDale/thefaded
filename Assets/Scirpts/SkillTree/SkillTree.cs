@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
-
-// [Serializable] 
-// public class Skill
-// {
-//     public string SkillName, SkillParent;
-// }
+[Serializable]
+public class Skill
+{
+    public string SkillName, SkillParent;
+    public Sprite SkillIcon;
+}
 
 public class SkillTree : MonoBehaviour
 {
@@ -20,46 +21,40 @@ public class SkillTree : MonoBehaviour
     Vector2 mouseDragPoint, pannelDragPoint, firstPannelPos;
     float top = 400, left = 800, right = 800, bottom = 400;
     bool onMouseDown;
-    Tree skillTree = new Tree("Dash"); // 첫스킬
+    Tree skillTree;
     List<Node> pointer;
     // public Skill FirstSkill;
-    // public Skill[] skills;
-
+    public Skill[] skills;
+    Dictionary<string, Sprite> skillIcon = new();
     void Start()
     {
+        CreateSkillNode();
         playerScript = GameObject.FindWithTag("Player").GetComponent<Player_Move>();
         posControlPannel = transform.GetChild(0);
         firstPannelPos = (Vector2)posControlPannel.transform.position;
         NewPannel(0, 0, "Dash");
         pointer = skillTree.StartNode.children;
-        CreateSkillTree();
+        // CreateSkillTree();
         CreatePannel(pointer, 1);
+    }
+    void CreateSkillNode()
+    {
+        foreach (Skill item in skills)
+        {
+            skillIcon.Add(item.SkillName, item.SkillIcon);
+            if (item.SkillParent != "Null")
+                skillTree.AddSkill(item.SkillParent, item.SkillName);
+            else
+                skillTree = new Tree(item.SkillName); // 첫스킬
+        }
     }
     void Update()
     {
         MouseBtn();
         PannelMove();
     }
-    // 스킬트리 생성부분임
-    void CreateSkillTree()
-    {
-        // foreach (Skill item in skills)
-        // {
-        //     skillTree.AddSkill(item.SkillName, item.SkillParent);
-        //     Debug.Log(item.SkillName + "...." + item.SkillParent);
-        // }
-        skillTree.AddSkill("Dash", "Attack");
-        skillTree.AddSkill("Dash", "Paring");
-        skillTree.AddSkill("Dash", "Hi");
-        skillTree.AddSkill("Dash", "Zi");
-        skillTree.AddSkill("Attack", "Nice");
-        skillTree.AddSkill("Attack", "It");
-        skillTree.AddSkill("Attack", "Its");
-        skillTree.AddSkill("Attack", "Itss");
-        skillTree.AddSkill("Attack", "Itsss");
-        // skillTree.AddSkill("Attack", "ReA");
-    }
 
+    const float width = 200, height = 300;
     // 패널 만드는부분임
     void CreatePannel(List<Node> pointer, int deepth, float x = 0)
     {
@@ -71,8 +66,8 @@ public class SkillTree : MonoBehaviour
         foreach (Node item in pointer)
         {
             int under = CheckUnder(item.children);
-            s = (float)((pointer.Count > 1) ? (first == 0 && isodd != 1) ? x : ((dir % 2) == 0 ? (dir - 1) * 100 * ((isodd != 1 && first < 3) ? 1.5 : 1) + x : dir * -100 * ((isodd != 1 && first < 3) ? 1.5 : 1) + x) : x);
-            NewPannel(s, deepth * 300, item.name);
+            s = (float)((pointer.Count > 1) ? (first == 0 && isodd != 1) ? x : ((dir % 2) == 0 ? (dir - 1) * width * ((isodd != 1 && first < 3) ? 1.5 : 1) + x : dir * -width * ((isodd != 1 && first < 3) ? 1.5 : 1) + x) : x);
+            NewPannel(s, deepth * height, item.name);
             dir++;
             if (under > 1) dir += (under % 2 == 0) ? under : under / 2 * 2;
             // else s--;
@@ -109,6 +104,8 @@ public class SkillTree : MonoBehaviour
         sp.transform.SetParent(posControlPannel, false);
         sp.transform.localPosition = new Vector2(x, y);
         sp.gameObject.name = name;
+        if (skillIcon.ContainsKey(name))
+            sp.GetComponent<Image>().sprite = skillIcon[name];
         if (dir != null)
         {
             AddLimit(dir, addLim);

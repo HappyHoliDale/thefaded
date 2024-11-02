@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4622344992894977356}
+  - component: {fileID: 4798288378067639162}
   - component: {fileID: 3692027700471679900}
   - component: {fileID: 990059976469145427}
   m_Layer: 5
@@ -25,7 +26,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5459290978969633368}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -34,9 +35,23 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 414.5349, y: -86.82654}
+  m_SizeDelta: {x: 166.1719, y: 159.78}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4798288378067639162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5459290978969633368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dddfc6bed7e84595897a9b331792daa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillTree: {fileID: 0}
+  skillInfoPannel: {fileID: 7873770376491361125, guid: bf7cf5af5c47c420388ec5034416061f, type: 3}
 --- !u!222 &3692027700471679900
 CanvasRenderer:
   m_ObjectHideFlags: 0
