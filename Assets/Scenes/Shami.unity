@@ -1548,6 +1548,8 @@ MonoBehaviour:
   hp: 10
   speed: 5
   getDamageCool: 1
+  attackCool: 1
+  attackBoxSize: {x: 0.93, y: 0}
   dash_time: 0.2
   dash_cooltime: 1
   dash_speed_multifly: 3

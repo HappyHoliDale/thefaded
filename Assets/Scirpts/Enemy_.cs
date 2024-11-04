@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Enemy_Control : MonoBehaviour
+public class Enemy_ : MonoBehaviour
 {
     [Header("속도")]
     public float idle_speed = 1f; // 혼자 움직임
@@ -27,6 +27,9 @@ public class Enemy_Control : MonoBehaviour
 
     [Header("기타")]
     public bool reversed = false; // 스프라이트 좌우반전
+    public float hp = 10f;
+    public float getDamageCool = 1f;
+    bool damaged = false;
 
     Transform target;
     Rigidbody2D rb;
@@ -203,6 +206,19 @@ public class Enemy_Control : MonoBehaviour
                 Debug.DrawRay(pos, direction * distance, Color.yellow);
             }
         }
+    }
+    public void GetDamage(float damage)
+    {
+        if (damaged) return;
+        damaged = true;
+        hp -= damage;
+        Debug.Log(gameObject.name + " || hp:" + hp);
+
+        Invoke("GetDamageCool", getDamageCool);
+    }
+    void GetDamageCool()
+    {
+        damaged = false;
     }
 }
 // 스프라이트 반전 추가할것
