@@ -14,7 +14,7 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        rb=GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -27,16 +27,16 @@ public class PlayerAttack : MonoBehaviour
     {
         if (curTime <= 0)
         {
-            if (Input.GetKeyDown(KeyCode.I))
+            if (Input.GetMouseButtonDown(0))
             {
                 Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
-                foreach (Collider2D collider in collider2Ds) 
+                foreach (Collider2D collider in collider2Ds)
                 {
                     Debug.Log(collider.tag);
                 }
                 curTime = cooltime;
             }
-       
+
         }
         else
         {
@@ -46,28 +46,25 @@ public class PlayerAttack : MonoBehaviour
 
     public void AttackPosition()
     {
-        if(Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D)) 
-        { 
-
-        }
+        // if(Input.GetKey(KeyCode.W)
         if (Input.GetKey(KeyCode.W))
         {
-            pos.localPosition = new Vector2(0, 0.9f);
+            pos.localPosition = new Vector2(0, 0.1f);
             pos.rotation = Quaternion.Euler(0, 0, 90);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            pos.localPosition = new Vector2(0, -1f);
+            pos.localPosition = new Vector2(0, -0.1f);
             pos.rotation = Quaternion.Euler(0, 0, 90);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            pos.localPosition = new Vector2(0.6f, -0.1f);
+            pos.localPosition = new Vector2(0.1f, 0f);
             pos.rotation = Quaternion.Euler(0, 0, 0);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            pos.localPosition = new Vector2(-0.6f, -0.1f);
+            pos.localPosition = new Vector2(-0.1f, 0f);
             pos.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
@@ -75,16 +72,16 @@ public class PlayerAttack : MonoBehaviour
     {
         Gizmos.color = Color.green;
 
-        // ±âÁ¸ Matrix¸¦ ÀúÀå
+        // ï¿½ï¿½ï¿½ï¿½ Matrixï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Matrix4x4 originalMatrix = Gizmos.matrix;
 
-        // posÀÇ À§Ä¡¿Í È¸ÀüÀ» ¹Ý¿µÇÑ Matrix ¼³Á¤
+        // posï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½ï¿½ï¿½ Matrix ï¿½ï¿½ï¿½ï¿½
         Gizmos.matrix = Matrix4x4.TRS(pos.position, pos.rotation, Vector3.one);
 
-        // È¸ÀüµÈ »óÅÂ·Î WireCube ±×¸®±â
+        // È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ WireCube ï¿½×¸ï¿½ï¿½ï¿½
         Gizmos.DrawWireCube(Vector3.zero, boxSize);
 
-        // Matrix¸¦ ¿ø·¡ »óÅÂ·Î µÇµ¹¸®±â
+        // Matrixï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
         Gizmos.matrix = originalMatrix;
     }
 
