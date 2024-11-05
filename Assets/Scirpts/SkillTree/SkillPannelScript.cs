@@ -51,21 +51,20 @@ using TMPro;
 
 public class SkillPannelScript : MonoBehaviour
 {
-    public SkillTree skillTree;
+    SkillTree skillTree;
     public TextMeshProUGUI skillInfoPannel;
     private TextMeshProUGUI skillInfo;
-    private string skillName;
 
     void Start()
     {
         skillTree = GameObject.Find("SkillTree").GetComponent<SkillTree>();
-        foreach (Skill item in skillTree.skills)
-        {
-            if (item.SkillName == gameObject.name)
-            {
-                // 정보 가져오기
-            }
-        }
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(gameObject));
+        // foreach (Skill item in skillTree.skills)
+        // {
+        //     if (item.SkillName == gameObject.name)
+        //     {
+        //     }
+        // }
     }
 
     void Update()
@@ -80,6 +79,7 @@ public class SkillPannelScript : MonoBehaviour
 
         if (Vector3.Distance(a, transform.position) < 100)
         {
+
             if (skillInfo == null)
                 skillInfo = Instantiate(skillInfoPannel, transform);
             skillInfo.transform.position = a + translate;
