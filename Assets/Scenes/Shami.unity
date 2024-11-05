@@ -923,15 +923,15 @@ MonoBehaviour:
     SkillIcon: {fileID: 21300000, guid: 3be7d3d3b033f4d24a6f4d0b8b8bdbd2, type: 3}
   - SkillName: Attack
     SkillParent: Dash
-    price: 0
+    price: 100
     SkillIcon: {fileID: 21300000, guid: 942452a1785f0439d9f915491403f9ed, type: 3}
   - SkillName: Block
     SkillParent: Dash
-    price: 0
+    price: 50
     SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
   - SkillName: Hi
     SkillParent: Attack
-    price: 0
+    price: 70
     SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
   - SkillName: ksafkl
     SkillParent: Attack
@@ -1887,7 +1887,7 @@ MonoBehaviour:
   getDamageCool: 1
   attackCool: 1
   attackBoxSize: {x: 1.24, y: 3}
-  coin: 0
+  coin: 500
   dash_time: 0.2
   dash_cooltime: 1
   dash_speed_multifly: 3
