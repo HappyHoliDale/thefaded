@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Player_Move : MonoBehaviour
+public class Player_ : MonoBehaviour
 {
     [Header("플레이어 스킬")]
     public bool _attack = false;
@@ -27,6 +27,7 @@ public class Player_Move : MonoBehaviour
     GameObject lockedTarget = null;
     Vector2 targetDir;
     Vector2 lastDir = new Vector2(1, 0);
+    public int coin = 0;
 
 
     [Header("대쉬")]

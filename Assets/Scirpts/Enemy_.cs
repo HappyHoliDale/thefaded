@@ -73,7 +73,7 @@ public class Enemy_ : MonoBehaviour
             {
                 yield return new WaitForSeconds(attackDelay);
                 if (Vector2.Distance(transform.position, target.position) <= attackDist)
-                    target.GetComponent<Player_Move>().GetDamage(damage);
+                    target.GetComponent<Player_>().GetDamage(damage);
                 yield return new WaitForSeconds(attackCool);
             }
         }
