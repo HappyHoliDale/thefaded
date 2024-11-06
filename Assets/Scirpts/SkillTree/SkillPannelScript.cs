@@ -58,7 +58,7 @@ public class SkillPannelScript : MonoBehaviour
     void Start()
     {
         skillTree = GameObject.Find("SkillTree").GetComponent<SkillTree>();
-        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(gameObject));
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(this.gameObject));
         // foreach (Skill item in skillTree.skills)
         // {
         //     if (item.SkillName == gameObject.name)
@@ -75,7 +75,7 @@ public class SkillPannelScript : MonoBehaviour
     {
         Vector3 a = Input.mousePosition;
         Vector3 translate = new Vector3(100, -100);
-        // Debug.Log(a + " || " + transform.position + " >>>>" + Vector3.Distance(a, transform.position));
+        // Debug.Log(a + " || " + transform.position + " >>>>" + Vector3.Distance(a, transform.position) + "||>> " + gameObject.name);
 
         if (Vector3.Distance(a, transform.position) < 100)
         {

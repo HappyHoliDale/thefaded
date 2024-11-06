@@ -18,26 +18,27 @@ public class SkillTree : MonoBehaviour
     public GameObject skillPannel;
     public Text coinText;
     Transform posControlPannel;
-    Player_ playerScript;
+    Player playerScript;
     Vector2 mouseDragPoint, pannelDragPoint, firstPannelPos;
     float top = 400, left = 800, right = 800, bottom = 400;
     bool onMouseDown;
-    Tree skillTree;
+    public Tree skillTree;
+    public string FirstSkillName;
     List<Node> pointer;
     // public Skill FirstSkill;
     public Skill[] skills;
     Dictionary<string, Sprite> skillIcon = new();
     int maxDeepth = 0;
     const float width = 200, height = 300;
-    void Start()
+    void Awake()
     {
         CreateSkillNode();
-        playerScript = GameObject.FindWithTag("Player").GetComponent<Player_>();
+        playerScript = GameObject.FindWithTag("Player").GetComponent<Player>();
         posControlPannel = transform.GetChild(0);
         firstPannelPos = (Vector2)posControlPannel.transform.position;
-        NewPannel(0, 0, "Dash");
         pointer = skillTree.StartNode.children;
         // CreateSkillTree();
+        NewPannel(0, 0, FirstSkillName);
         CreatePannel(pointer, 1);
         AddLimCheck(skillTree.StartNode.children);
         AddLimit("vertical", height * maxDeepth);
@@ -50,7 +51,9 @@ public class SkillTree : MonoBehaviour
             if (item.SkillParent != "Null")
                 skillTree.AddSkill(item.SkillParent, item.SkillName, item.price);
             else
+            {
                 skillTree = new Tree(item.SkillName); // 첫스킬
+            }
         }
     }
     void Update()
@@ -156,7 +159,7 @@ public class SkillTree : MonoBehaviour
         {
             Vector2 mousePos = Camera.main.WorldToScreenPoint(Input.mousePosition);
             Vector2 mouseMoved = mousePos - mouseDragPoint;
-            posControlPannel.position = pannelDragPoint + mouseMoved * 0.005f;
+            posControlPannel.position = pannelDragPoint + mouseMoved * 0.0001f;
         }
     }
     void MouseBtn()
@@ -215,7 +218,7 @@ public class SkillTree : MonoBehaviour
 }
 
 
-class Node
+public class Node
 {
     public string name;
     public int price;
@@ -235,7 +238,7 @@ class Node
         child.parent = this;
     }
 }
-class Tree
+public class Tree
 {
     public Node StartNode;
 
