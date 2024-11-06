@@ -61,7 +61,7 @@ public class SkillTree : MonoBehaviour
     }
     void EconomicSystem()
     {
-        coinText.text = "﷼p " + playerScript.coin.ToString();
+        coinText.text = "﷼ " + playerScript.coin.ToString();
     }
     // 패널 만드는부분임
     void CreatePannel(List<Node> pointer, int deepth, float x = 0)
