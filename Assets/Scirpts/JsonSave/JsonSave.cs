@@ -23,6 +23,7 @@ public class JsonSave : MonoBehaviour
     public void save()
     {
         // StreamWriter sw = new("a.txt");
+        
         // sw.WriteLine(JsonUtility.ToJson(data));
         // sw.Close();
 

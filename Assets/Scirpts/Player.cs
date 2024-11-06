@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public class PlayerData
 {
-    public Tree savedTree;
     public int level;
     public int coin;
 }
@@ -19,7 +19,6 @@ public class Player : MonoBehaviour, ISavable
     public bool _dash = false;
     delegate void MyFunc();
     public SkillTree skillTreeScript;
-
 
 
     [Header("플레이어 상태")]
@@ -38,7 +37,7 @@ public class Player : MonoBehaviour, ISavable
     Vector2 targetDir;
     Vector2 lastDir = new Vector2(1, 0);
     public int coin = 0;
-
+    public int level = 1;
 
     [Header("대쉬")]
     public float dash_time = 0.2f;
@@ -69,6 +68,7 @@ public class Player : MonoBehaviour, ISavable
         if (Input.GetKeyDown(KeyCode.P))
         {
             DataManager.Instance.SaveGame(false);
+            SceneManager.LoadScene("Shami");
         }
     }
     void Attack()
@@ -216,12 +216,12 @@ public class Player : MonoBehaviour, ISavable
     public void LoadData(Database data)
     {
         coin = data.playerData.coin;
-        skillTreeScript.skillTree = data.playerData.savedTree;
+        level = data.playerData.level;
     }
 
     public void SaveData(ref Database data)
     {
         data.playerData.coin = coin;
-        data.playerData.savedTree = skillTreeScript.skillTree;
+        data.playerData.level = level;
     }
 }

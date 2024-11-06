@@ -970,19 +970,25 @@ MonoBehaviour:
   - SkillName: Attack
     SkillParent: Dash
     price: 100
-    SkillIcon: {fileID: 21300000, guid: 942452a1785f0439d9f915491403f9ed, type: 3}
-  - SkillName: Block
+    SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
+  - SkillName: Hide
     SkillParent: Dash
-    price: 50
+    price: 100
     SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
-  - SkillName: Hi
-    SkillParent: Attack
-    price: 70
+  - SkillName: Paring
+    SkillParent: Dash
+    price: 100
     SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
-  - SkillName: ksafkl
-    SkillParent: Attack
-    price: 0
+  - SkillName: Fastly
+    SkillParent: Paring
+    price: 100
     SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
+  - SkillName: Slowly
+    SkillParent: Paring
+    price: 100
+    SkillIcon: {fileID: 21300000, guid: cef494d573f9f4c66b0fd5ef2914c435, type: 3}
+  linePrefab: {fileID: 5177554460469775058, guid: 292496ef46eb148f7b2ee9100db27cc4, type: 3}
+  lineOffsetControl: 0.2
 --- !u!1 &980342764
 GameObject:
   m_ObjectHideFlags: 0
@@ -1984,6 +1990,7 @@ MonoBehaviour:
   attackCool: 1
   attackBoxSize: {x: 1.24, y: 3}
   coin: 500
+  level: 1
   dash_time: 0.2
   dash_cooltime: 1
   dash_speed_multifly: 3

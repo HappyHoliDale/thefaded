@@ -30,7 +30,7 @@ public class SkillTree : MonoBehaviour
     Dictionary<string, Sprite> skillIcon = new();
     int maxDeepth = 0;
     const float width = 200, height = 300;
-    void Awake()
+    void Start()
     {
         CreateSkillNode();
         playerScript = GameObject.FindWithTag("Player").GetComponent<Player>();
@@ -43,7 +43,7 @@ public class SkillTree : MonoBehaviour
         AddLimCheck(skillTree.StartNode.children);
         AddLimit("vertical", height * maxDeepth);
     }
-    void CreateSkillNode()
+    public Tree CreateSkillNode()
     {
         foreach (Skill item in skills)
         {
@@ -52,9 +52,10 @@ public class SkillTree : MonoBehaviour
                 skillTree.AddSkill(item.SkillParent, item.SkillName, item.price);
             else
             {
-                skillTree = new Tree(item.SkillName); // 첫스킬
+                skillTree = new Tree(FirstSkillName); // 첫스킬
             }
         }
+        return skillTree;
     }
     void Update()
     {
@@ -123,7 +124,7 @@ public class SkillTree : MonoBehaviour
             }
         }
     }
-
+    public GameObject linePrefab;
     void NewPannel(float x, float y, string name, GameObject parent = null)
     {
         GameObject sp = Instantiate(skillPannel);
@@ -134,25 +135,53 @@ public class SkillTree : MonoBehaviour
             sp.GetComponent<Image>().sprite = skillIcon[name];
         if (parent != null)
         {
-            // 선을 그리기 위해 LineRenderer 추가
-            LineRenderer line = sp.AddComponent<LineRenderer>();
-            line.startWidth = 0.1f;
-            line.endWidth = 0.1f;
-            line.positionCount = 2;
-            line.material = new Material(Shader.Find("Sprites/Default")); // 기본 소재 설정
-            line.startColor = Color.white;
-            line.endColor = Color.white;
+            GameObject line = Instantiate(linePrefab, posControlPannel);
+            LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
+            lineRenderer.positionCount = 2;
 
-            // 부모와 자식 패널 위치를 연결
-            Vector3 parentPos = parent.transform.position;
-            Vector3 childPos = sp.transform.position;
-            line.SetPosition(0, parentPos);
-            line.SetPosition(1, childPos);
+            RectTransform parentRect = parent.GetComponent<RectTransform>();
+            RectTransform spRect = sp.GetComponent<RectTransform>();
+
+            Vector3 startPos = parent.transform.position;
+            Vector3 endPos = sp.transform.position;
+
+            Vector3 direction = (endPos - startPos).normalized;
+            float parentOffset = Mathf.Min(parentRect.rect.width, parentRect.rect.height) / 2;
+            float spOffset = Mathf.Min(spRect.rect.width, spRect.rect.height) / 2;
+
+            startPos += direction * parentOffset;
+            endPos -= direction * spOffset;
+
+            lineRenderer.SetPosition(0, startPos);
+            lineRenderer.SetPosition(1, endPos);
+
+            // LineRenderer를 위치 업데이트하도록 연결
+            StartCoroutine(UpdateLine(lineRenderer, parent.transform, sp.transform, parentRect, spRect));
+
         }
     }
+    public float lineOffsetControl = 0.01f;
+    IEnumerator UpdateLine(LineRenderer lineRenderer, Transform start, Transform end, RectTransform startRect, RectTransform endRect)
+    {
+        while (true)
+        {
+            Vector3 startPos = start.position;
+            Vector3 endPos = end.position;
 
-    // 다음 스킬크리가 이전 스킬트리 해제해야 가능하게 하는거 
-    //addeventlistener를 각각 컴포넌트 순회하면서 화살표함수로 꽂아주면 될듯
+            Vector3 direction = (endPos - startPos).normalized;
+            float lineOffset = Vector3.Distance(endPos, startPos) * lineOffsetControl;
+            float startOffset = Mathf.Min(startRect.rect.width, startRect.rect.height) * 0.01f * lineOffset;
+            float endOffset = Mathf.Min(endRect.rect.width, endRect.rect.height) * 0.01f * lineOffset;
+
+            startPos += direction * startOffset;
+            endPos -= direction * endOffset;
+
+            lineRenderer.SetPosition(0, startPos);
+            lineRenderer.SetPosition(1, endPos);
+
+            yield return null;
+        }
+    }
     void PannelMove()
     {
         if (onMouseDown)
@@ -205,6 +234,8 @@ public class SkillTree : MonoBehaviour
     }
     public void PnlClicked(GameObject skill)
     {
+        Debug.Log(skill.name);
+        Debug.Log(skillTree.StartNode + ">>");
         Node clickedNode = skillTree.FindNode(skillTree.StartNode, skill.name);
         if (clickedNode == null) return;
         if (clickedNode.parent != null && clickedNode.parent.isSold != true) return;

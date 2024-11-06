@@ -31,8 +31,10 @@ public class DataManager : Singleton<DataManager>
 
     public void SaveGame(bool SaveData)
     {
-        if(SaveData){
-            foreach(var savableObject in savableObjects){
+        if (SaveData)
+        {
+            foreach (var savableObject in savableObjects)
+            {
                 savableObject.SaveData(ref data);
             }
         }
@@ -41,20 +43,24 @@ public class DataManager : Singleton<DataManager>
         fileDataHandler.Save(data);
     }
 
-    public void LoadGame(){
+    public void LoadGame()
+    {
         data = fileDataHandler.Load();
 
-        if (data == null){
+        if (data == null)
+        {
             Debug.Log("No Data Initialized. Initializing the data");
             data = new Database();
         }
 
-        foreach (ISavable savableObject in savableObjects){
+        foreach (ISavable savableObject in savableObjects)
+        {
             savableObject.LoadData(data);
         }
     }
 
-    private void OnApplicationQuit(){
+    private void OnApplicationQuit()
+    {
         SaveGame(true);
     }
 }
@@ -64,8 +70,10 @@ public class FileDataHandler
     private string dataDirectoryPath = "";
     private string dataFileName = "";
 
-    public FileDataHandler(string dataDirectoryPath, string dataFileName){
+    public FileDataHandler(string dataDirectoryPath, string dataFileName)
+    {
         this.dataDirectoryPath = dataDirectoryPath;
+        Debug.Log(dataDirectoryPath + " [ > ] " + dataFileName);
         this.dataFileName = dataFileName;
     }
 
@@ -73,12 +81,15 @@ public class FileDataHandler
     {
         string fullPath = Path.Combine(dataDirectoryPath, dataFileName);
         Database loadedData = null;
-        if (File.Exists(fullPath)){
+        if (File.Exists(fullPath))
+        {
             try
             {
                 string dataToLoad = "";
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open)){
-                    using (StreamReader reader = new StreamReader(stream)){
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
                         dataToLoad = reader.ReadToEnd();
                     }
                 }
@@ -102,13 +113,15 @@ public class FileDataHandler
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
             string dataToStore = JsonUtility.ToJson(data, true);
 
-            using (FileStream stream = new FileStream(fullPath, FileMode.Create)){
-                using (StreamWriter writer = new StreamWriter(stream)){
+            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+            {
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
                     writer.Write(dataToStore);
                 }
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.LogException(e);
         }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Database
 {
     public PlayerData playerData;
+    public SkillTree st;
     public Database()
     {
         Init();
@@ -12,6 +13,6 @@ public class Database
     public void Init()
     {
         playerData = new PlayerData()
-        { savedTree = null, level = 1, coin = 0 };
+        { level = 1, coin = 0 };
     }
 }
