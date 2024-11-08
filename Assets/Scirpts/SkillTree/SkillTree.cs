@@ -13,12 +13,13 @@ public class Skill
     public Sprite SkillIcon;
 }
 
-public class SkillTree : MonoBehaviour
+public class SkillTree : MonoBehaviour, ISavable
 {
     public GameObject skillPannel;
     public Text coinText;
-    Transform posControlPannel;
-    Player playerScript;
+    public bool isSkillTreeLoaded = false;
+    public Transform posControlPannel;
+    public Player playerScript;
     Vector2 mouseDragPoint, pannelDragPoint, firstPannelPos;
     float top = 400, left = 800, right = 800, bottom = 400;
     bool onMouseDown;
@@ -32,9 +33,6 @@ public class SkillTree : MonoBehaviour
     const float width = 200, height = 300;
     void Start()
     {
-        CreateSkillNode();
-        playerScript = GameObject.FindWithTag("Player").GetComponent<Player>();
-        posControlPannel = transform.GetChild(0);
         firstPannelPos = (Vector2)posControlPannel.transform.position;
         pointer = skillTree.StartNode.children;
         // CreateSkillTree();
@@ -42,6 +40,21 @@ public class SkillTree : MonoBehaviour
         CreatePannel(pointer, 1);
         AddLimCheck(skillTree.StartNode.children);
         AddLimit("vertical", height * maxDeepth);
+    }
+    public void LoadData(Database data)
+    {
+        if (data.playerData.st == null)
+        {
+            CreateSkillNode();
+        }
+        else
+        {
+            skillTree = data.playerData.st;
+        }
+    }
+    public void SaveData(ref Database data)
+    {
+        data.playerData.st = skillTree;
     }
     public Tree CreateSkillNode()
     {
@@ -154,7 +167,6 @@ public class SkillTree : MonoBehaviour
 
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
-
             // LineRenderer를 위치 업데이트하도록 연결
             StartCoroutine(UpdateLine(lineRenderer, parent.transform, sp.transform, parentRect, spRect));
 
@@ -178,6 +190,8 @@ public class SkillTree : MonoBehaviour
 
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
+            lineRenderer.transform.parent.SetParent(posControlPannel, false);
+
 
             yield return null;
         }

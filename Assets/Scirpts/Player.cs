@@ -10,6 +10,7 @@ public class PlayerData
 {
     public int level;
     public int coin;
+    public Tree st;
 }
 public class Player : MonoBehaviour, ISavable
 {
@@ -60,6 +61,7 @@ public class Player : MonoBehaviour, ISavable
     {
         Rotate();
         Move();
+
     }
     void Update()
     {
@@ -68,6 +70,11 @@ public class Player : MonoBehaviour, ISavable
         if (Input.GetKeyDown(KeyCode.P))
         {
             DataManager.Instance.SaveGame(false);
+            SceneManager.LoadScene("Shami");
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            DataManager.Instance.SaveGame(true);
             SceneManager.LoadScene("Shami");
         }
     }
