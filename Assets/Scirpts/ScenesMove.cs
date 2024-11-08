@@ -6,7 +6,7 @@ public class ScenesMove : MonoBehaviour
     // 각 씬에 대한 로드 함수를 배열로 선언
     private System.Action[] loadSceneActions;
 
-    private void Start()
+    public void SceneMove()
     {
         // 배열에 씬 로딩 함수를 할당
         loadSceneActions = new System.Action[]
