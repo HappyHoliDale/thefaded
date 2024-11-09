@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,16 +14,18 @@ public class Skill
     public Sprite SkillIcon;
 }
 
-public class SkillTree : MonoBehaviour
+public class SkillTree : MonoBehaviour, ISavable
 {
     public GameObject skillPannel;
     public Text coinText;
-    Transform posControlPannel;
-    Player_ playerScript;
+    public bool isSkillTreeLoaded = false;
+    public Transform posControlPannel;
+    public Player playerScript;
     Vector2 mouseDragPoint, pannelDragPoint, firstPannelPos;
     float top = 400, left = 800, right = 800, bottom = 400;
     bool onMouseDown;
-    Tree skillTree;
+    public Tree skillTree;
+    public string FirstSkillName;
     List<Node> pointer;
     // public Skill FirstSkill;
     public Skill[] skills;
@@ -31,57 +34,154 @@ public class SkillTree : MonoBehaviour
     const float width = 200, height = 300;
     void Start()
     {
-        CreateSkillNode();
-        playerScript = GameObject.FindWithTag("Player").GetComponent<Player_>();
-        posControlPannel = transform.GetChild(0);
         firstPannelPos = (Vector2)posControlPannel.transform.position;
-        NewPannel(0, 0, "Dash");
-        pointer = skillTree.StartNode.children;
         // CreateSkillTree();
-        CreatePannel(pointer, 1);
+        NewPannel(0, 0, FirstSkillName);
         AddLimCheck(skillTree.StartNode.children);
         AddLimit("vertical", height * maxDeepth);
+        CreatePannel(pointer, 1);
+        CheckPnlisSold();
     }
-    void CreateSkillNode()
+    public void LoadData(Database data)
     {
+        Debug.Log(data.playerData.st);
+        if (data.playerData.st == null)
+        {
+            Debug.Log("data load failled");
+            CreateSkillNode();
+            pointer = skillTree.StartNode.children;
+        }
+        else
+        {
+            Debug.Log("data loaded");
+            skillTree = data.playerData.st;
+            foreach (Skill item in skills)
+            {
+                skillIcon.Add(item.SkillName, item.SkillIcon);
+            }
+            pointer = skillTree.StartNode.children;
+        }
+    }
+    public void SaveData(ref Database data)
+    {
+        data.playerData.st = skillTree;
+        Debug.Log("data saved");
+        Debug.Log(data.playerData.st);
+    }
+    public Tree CreateSkillNode()
+    {
+        skillTree = new Tree(FirstSkillName); // 첫스킬
+
         foreach (Skill item in skills)
         {
             skillIcon.Add(item.SkillName, item.SkillIcon);
             if (item.SkillParent != "Null")
                 skillTree.AddSkill(item.SkillParent, item.SkillName, item.price);
-            else
-                skillTree = new Tree(item.SkillName); // 첫스킬
         }
+        return skillTree;
     }
     void Update()
     {
         MouseBtn();
         PannelMove();
         EconomicSystem();
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            Debug.Log(skillTree.StartNode.name);
+            Debug.Log(skillTree.StartNode.isSold);
+            Debug.Log(skillTree.StartNode.children.Count);
+
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            CreatePannel(pointer, 1);
+
+        }
     }
     void EconomicSystem()
     {
-        coinText.text = "﷼p " + playerScript.coin.ToString();
+        coinText.text = "﷼ " + playerScript.coin.ToString();
     }
     // 패널 만드는부분임
     void CreatePannel(List<Node> pointer, int deepth, float x = 0)
     {
+        if (pointer == null)
+        {
+            Debug.LogError("pointer가 null입니다.");
+            return;
+        }
+
         int dir = 1;
         float s = 0;
         int first = 0;
         float isodd = (pointer.Count % 2 == 1) ? 1.5f : 1;
-        // Debug.Log(isodd);
+
+        bool isOdd = (pointer.Count % 2 == 1) ? true : false;
+        bool isFirst = true;
+        bool isRight = true;
+        int num = 1;
+
+
         foreach (Node item in pointer)
         {
+            if (item == null)
+            {
+                Debug.LogError("노드없음");
+                continue;
+            }
+
             int under = CheckUnder(item.children);
-            s = (float)((pointer.Count > 1) ? (first == 0 && isodd != 1) ? x : ((dir % 2) == 0 ? (dir - 1) * width * ((isodd != 1 && first < 3) ? 1.5 : 1) + x : dir * -width * ((isodd != 1 && first < 3) ? 1.5 : 1) + x) : x);
-            NewPannel(s, deepth * height, item.name, GameObject.Find(item.parent.name));
-            dir++;
-            if (under > 1) dir += (under % 2 == 0) ? under : under / 2 * 2;
-            // else s--;
+            if (pointer.Count < 2 || isFirst && isOdd)
+            {
+                s = x;
+            }
+            else
+            {
+                if (isOdd)
+                {
+                    if (num < 4)
+                    {
+                        if (isRight)
+                        {
+                            s = width * 2 + x;
+                        }
+                        else
+                        {
+                            s = width * -2 + x;
+                        }
+                    }
+                    else
+                    {
+                        if (isRight)
+                        {
+                            s = width * (num - 1) + x;
+                        }
+                        else
+                        {
+                            s = width * -num + x;
+                        }
+                    }
+                }
+                else
+                {
+                    if (isRight)
+                    {
+                        s = width * num + x;
+                    }
+                    else
+                    {
+                        s = width * -(num - 1) + x;
+                    }
+                }
+            }
+            num++;
+            isRight = isRight ? false : true;
+            isFirst = isFirst ? false : false;
+
+            NewPannel(s, deepth * height, item.name, GameObject.Find(item.parentName));
+
             if (item.children.Count != 0)
             {
-                // s = item.children.Count;
                 CreatePannel(item.children, deepth + 1, s);
             }
             if (first == 0 && isodd != 1)
@@ -90,7 +190,8 @@ public class SkillTree : MonoBehaviour
             }
             first++;
         }
-    } // 겹치는거 고치면 끝
+    } // 겹치는거 고쳐라
+
 
     int CheckUnder(List<Node> pointer)
     {
@@ -120,7 +221,7 @@ public class SkillTree : MonoBehaviour
             }
         }
     }
-
+    public GameObject linePrefab;
     void NewPannel(float x, float y, string name, GameObject parent = null)
     {
         GameObject sp = Instantiate(skillPannel);
@@ -131,32 +232,65 @@ public class SkillTree : MonoBehaviour
             sp.GetComponent<Image>().sprite = skillIcon[name];
         if (parent != null)
         {
-            // 선을 그리기 위해 LineRenderer 추가
-            LineRenderer line = sp.AddComponent<LineRenderer>();
-            line.startWidth = 0.1f;
-            line.endWidth = 0.1f;
-            line.positionCount = 2;
-            line.material = new Material(Shader.Find("Sprites/Default")); // 기본 소재 설정
-            line.startColor = Color.white;
-            line.endColor = Color.white;
+            GameObject line = Instantiate(linePrefab, posControlPannel);
+            LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
+            lineRenderer.positionCount = 2;
 
-            // 부모와 자식 패널 위치를 연결
-            Vector3 parentPos = parent.transform.position;
-            Vector3 childPos = sp.transform.position;
-            line.SetPosition(0, parentPos);
-            line.SetPosition(1, childPos);
+            RectTransform parentRect = parent.GetComponent<RectTransform>();
+            RectTransform spRect = sp.GetComponent<RectTransform>();
+
+            Vector3 startPos = parent.transform.position;
+            Vector3 endPos = sp.transform.position;
+
+            Vector3 direction = (endPos - startPos).normalized;
+            float parentOffset = Mathf.Min(parentRect.rect.width, parentRect.rect.height) / 2;
+            float spOffset = Mathf.Min(spRect.rect.width, spRect.rect.height) / 2;
+
+            startPos += direction * parentOffset;
+            endPos -= direction * spOffset;
+
+            lineRenderer.SetPosition(0, startPos);
+            lineRenderer.SetPosition(1, endPos);
+            // LineRenderer를 위치 업데이트하도록 연결
+            StartCoroutine(UpdateLine(lineRenderer, parent.transform, sp.transform, parentRect, spRect));
+
+        }
+        else
+        {
+            Debug.Log(">>>>부모없음");
         }
     }
+    public float lineOffsetControl = 0.01f;
+    IEnumerator UpdateLine(LineRenderer lineRenderer, Transform start, Transform end, RectTransform startRect, RectTransform endRect)
+    {
+        while (true)
+        {
+            Vector3 startPos = start.position;
+            Vector3 endPos = end.position;
 
-    // 다음 스킬크리가 이전 스킬트리 해제해야 가능하게 하는거 
-    //addeventlistener를 각각 컴포넌트 순회하면서 화살표함수로 꽂아주면 될듯
+            Vector3 direction = (endPos - startPos).normalized;
+            float lineOffset = Vector3.Distance(endPos, startPos) * lineOffsetControl;
+            float startOffset = Mathf.Min(startRect.rect.width, startRect.rect.height) * 0.01f * lineOffset;
+            float endOffset = Mathf.Min(endRect.rect.width, endRect.rect.height) * 0.01f * lineOffset;
+
+            startPos += direction * startOffset;
+            endPos -= direction * endOffset;
+
+            lineRenderer.SetPosition(0, startPos);
+            lineRenderer.SetPosition(1, endPos);
+            lineRenderer.transform.parent.SetParent(posControlPannel, false);
+
+
+            yield return null;
+        }
+    }
     void PannelMove()
     {
         if (onMouseDown)
         {
             Vector2 mousePos = Camera.main.WorldToScreenPoint(Input.mousePosition);
             Vector2 mouseMoved = mousePos - mouseDragPoint;
-            posControlPannel.position = pannelDragPoint + mouseMoved * 0.005f;
+            posControlPannel.position = pannelDragPoint + mouseMoved * 0.0001f;
         }
     }
     void MouseBtn()
@@ -202,26 +336,47 @@ public class SkillTree : MonoBehaviour
     }
     public void PnlClicked(GameObject skill)
     {
+        Debug.Log(skill.name);
+
+        // skill.name으로 노드를 찾고, 찾은 노드가 null인지 확인
         Node clickedNode = skillTree.FindNode(skillTree.StartNode, skill.name);
-        if (clickedNode == null) return;
-        if (clickedNode.parent != null && clickedNode.parent.isSold != true) return;
-        if (clickedNode.isSold == true) return;
-        if (clickedNode.price > playerScript.coin) return;
+        Debug.Log(clickedNode.isSold);
+        // 클릭된 노드가 null일 경우, 또는 노드가 판매되지 않은 상태, 가격이 부족할 경우, 부모 노드가 판매되지 않은 경우 처리
+        if (clickedNode == null ||
+            clickedNode.isSold == true ||
+            clickedNode.price > playerScript.coin ||
+            (clickedNode.parentName != null && skillTree.FindNode(skillTree.StartNode, clickedNode.parentName)?.isSold == false))
+        {
+            return;
+        }
+
         playerScript.coin -= clickedNode.price;
         clickedNode.isSold = true;
         skill.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-        // 여따 스킬 능력 추가도 넣을듯
+        // 스킬 능력 추가 코드 여따 넣을거임
+    }
+    public void CheckPnlisSold()
+    {
+        foreach (Skill skill in skills)
+        {
+            Node node_ = skillTree.FindNode(skillTree.StartNode, skill.SkillName);
+            if (node_.isSold == true)
+            {
+                GameObject.Find(node_.name).GetComponent<Image>().color = new Color(1, 1, 1, 1);
+            }
+        }
     }
 }
 
 
-class Node
+public class Node
 {
     public string name;
     public int price;
     public bool isSold;
-    public Node parent;
+    public string parentName;  // parentName으로 대체
     public List<Node> children;
+
     public Node(string name, int price)
     {
         this.name = name;
@@ -229,20 +384,22 @@ class Node
         isSold = false;
         children = new List<Node>();
     }
+
     public void AddChild(Node child)
     {
         children.Add(child);
-        child.parent = this;
+        child.parentName = this.name;  // parentName을 설정
     }
 }
-class Tree
+
+public class Tree
 {
     public Node StartNode;
 
     public Tree(string startName)
     {
         StartNode = new Node(startName, 0);
-        StartNode.parent = null;
+        StartNode.parentName = null;
     }
 
     public Node AddSkill(string parentName, string skillName, int price)
