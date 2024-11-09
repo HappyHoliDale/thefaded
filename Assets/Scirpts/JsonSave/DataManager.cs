@@ -6,6 +6,7 @@ using System.IO;
 using System.Data;
 using UnityEngine;
 using UnityEditor.Build.Content;
+using Newtonsoft.Json;
 
 public class DataManager : Singleton<DataManager>
 {
@@ -15,7 +16,7 @@ public class DataManager : Singleton<DataManager>
     Database data = new(); // 또는 = new Database();
     public List<ISavable> savableObjects = new();
 
-    void Start()
+    void Awake()
     {
         fileDataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         savableObjects = FindAllSavealbleObject();
@@ -85,16 +86,11 @@ public class FileDataHandler
         {
             try
             {
-                string dataToLoad = "";
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                string dataToLoad = File.ReadAllText(fullPath);
+                loadedData = JsonConvert.DeserializeObject<Database>(dataToLoad, new JsonSerializerSettings
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        dataToLoad = reader.ReadToEnd();
-                    }
-                }
-
-                loadedData = JsonUtility.FromJson<Database>(dataToLoad);
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                });
             }
             catch (Exception e)
             {
@@ -111,15 +107,13 @@ public class FileDataHandler
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            string dataToStore = JsonUtility.ToJson(data, true);
 
-            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+            // 순환 참조를 유지하면서 직렬화
+            string dataToStore = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings
             {
-                using (StreamWriter writer = new StreamWriter(stream))
-                {
-                    writer.Write(dataToStore);
-                }
-            }
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
+            File.WriteAllText(fullPath, dataToStore);
         }
         catch (Exception e)
         {
