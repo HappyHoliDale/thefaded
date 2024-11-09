@@ -58,7 +58,7 @@ public class SkillPannelScript : MonoBehaviour
     void Start()
     {
         skillTree = GameObject.Find("SkillTree").GetComponent<SkillTree>();
-        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(gameObject));
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(this.gameObject));
         // foreach (Skill item in skillTree.skills)
         // {
         //     if (item.SkillName == gameObject.name)

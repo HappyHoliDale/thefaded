@@ -31,7 +31,7 @@ public class SkillTree : MonoBehaviour, ISavable
     public Skill[] skills;
     Dictionary<string, Sprite> skillIcon = new();
     int maxDeepth = 0;
-    const float width = 200, height = 600;
+    const float width = 200, height = 300;
     void Start()
     {
         firstPannelPos = (Vector2)posControlPannel.transform.position;
@@ -120,8 +120,8 @@ public class SkillTree : MonoBehaviour, ISavable
         bool isFirst = true;
         bool isRight = true;
         int num = 1;
-        float lPlus = 0;
-        float rPlus = 0;
+
+
         foreach (Node item in pointer)
         {
             if (item == null)
@@ -129,7 +129,8 @@ public class SkillTree : MonoBehaviour, ISavable
                 Debug.LogError("노드없음");
                 continue;
             }
-            Vector2 under = CheckUnder(item.children);
+
+            int under = CheckUnder(item.children);
             if (pointer.Count < 2 || isFirst && isOdd)
             {
                 s = x;
@@ -142,22 +143,22 @@ public class SkillTree : MonoBehaviour, ISavable
                     {
                         if (isRight)
                         {
-                            s = width * 2 + x + rPlus;
+                            s = width * 2 + x;
                         }
                         else
                         {
-                            s = width * -2 + x + lPlus;
+                            s = width * -2 + x;
                         }
                     }
                     else
                     {
                         if (isRight)
                         {
-                            s = width * (num - 1) + x + rPlus;
+                            s = width * (num - 1) + x;
                         }
                         else
                         {
-                            s = width * -num + x + lPlus;
+                            s = width * -num + x;
                         }
                     }
                 }
@@ -165,34 +166,18 @@ public class SkillTree : MonoBehaviour, ISavable
                 {
                     if (isRight)
                     {
-                        s = width * num + x + rPlus;
+                        s = width * num + x;
                     }
                     else
                     {
-                        s = width * -(num - 1) + x + lPlus;
+                        s = width * -(num - 1) + x;
                     }
                 }
             }
             num++;
-            if (!(under.x < 2))//isFirst || 
-            {
-                float p = under.x * width * 0.6f;
-                if (isRight)
-                {
-                    rPlus += p * 2 * under.y;
-                    s += p;
-
-                }
-                else
-                {
-                    s += -p;
-                    lPlus += -p * 2 * under.y;
-                }
-            }
             isRight = isRight ? false : true;
             isFirst = isFirst ? false : false;
 
-            Debug.Log("||>>>>>>>>>>>>>" + item.name);
             NewPannel(s, deepth * height, item.name, GameObject.Find(item.parentName));
 
             if (item.children.Count != 0)
@@ -208,25 +193,19 @@ public class SkillTree : MonoBehaviour, ISavable
     } // 겹치는거 고쳐라
 
 
-    Vector2 CheckUnder(List<Node> pointer, int deepth = 0)
+    int CheckUnder(List<Node> pointer)
     {
         int under = 0;
-        int dth = 0;
-        int cdth = 0;
-        if (pointer.Count == 0) return new Vector2(1, deepth);
+        if (pointer.Count == 0) return 1;
         else
         {
             foreach (Node item in pointer)
             {
-                under += (int)CheckUnder(item.children, deepth + 1).x;
-                cdth = (int)CheckUnder(item.children, deepth + 1).y;
-                if (dth < cdth)
-                    dth = cdth;
+                under += CheckUnder(item.children);
             }
+            return under;
         }
-        return new Vector2(under, dth);
     }
-
     void AddLimCheck(List<Node> pointer, int deepth = 0)
     {
         if (deepth > maxDeepth) maxDeepth = deepth;
@@ -257,13 +236,23 @@ public class SkillTree : MonoBehaviour, ISavable
             LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
             lineRenderer.positionCount = 2;
 
-            Vector3 startPos = parent.transform.position + new Vector3(0, 50);
-            Vector3 endPos = sp.transform.position + new Vector3(0, -50);
+            RectTransform parentRect = parent.GetComponent<RectTransform>();
+            RectTransform spRect = sp.GetComponent<RectTransform>();
+
+            Vector3 startPos = parent.transform.position;
+            Vector3 endPos = sp.transform.position;
+
+            Vector3 direction = (endPos - startPos).normalized;
+            float parentOffset = Mathf.Min(parentRect.rect.width, parentRect.rect.height) / 2;
+            float spOffset = Mathf.Min(spRect.rect.width, spRect.rect.height) / 2;
+
+            startPos += direction * parentOffset;
+            endPos -= direction * spOffset;
 
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
             // LineRenderer를 위치 업데이트하도록 연결
-            StartCoroutine(UpdateLine(lineRenderer, parent.transform, sp.transform));
+            StartCoroutine(UpdateLine(lineRenderer, parent.transform, sp.transform, parentRect, spRect));
 
         }
         else
@@ -272,12 +261,20 @@ public class SkillTree : MonoBehaviour, ISavable
         }
     }
     public float lineOffsetControl = 0.01f;
-    IEnumerator UpdateLine(LineRenderer lineRenderer, Transform start, Transform end)
+    IEnumerator UpdateLine(LineRenderer lineRenderer, Transform start, Transform end, RectTransform startRect, RectTransform endRect)
     {
         while (true)
         {
             Vector3 startPos = start.position;
             Vector3 endPos = end.position;
+
+            Vector3 direction = (endPos - startPos).normalized;
+            float lineOffset = Vector3.Distance(endPos, startPos) * lineOffsetControl;
+            float startOffset = Mathf.Min(startRect.rect.width, startRect.rect.height) * 0.01f * lineOffset;
+            float endOffset = Mathf.Min(endRect.rect.width, endRect.rect.height) * 0.01f * lineOffset;
+
+            startPos += direction * startOffset;
+            endPos -= direction * endOffset;
 
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
@@ -348,7 +345,7 @@ public class SkillTree : MonoBehaviour, ISavable
         if (clickedNode == null ||
             clickedNode.isSold == true ||
             clickedNode.price > playerScript.coin ||
-            (clickedNode.parentName != null && skillTree.FindNode(clickedNode, clickedNode.parentName)?.isSold == false))
+            (clickedNode.parentName != null && skillTree.FindNode(skillTree.StartNode, clickedNode.parentName)?.isSold == false))
         {
             return;
         }
