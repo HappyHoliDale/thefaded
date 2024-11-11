@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +16,7 @@ public class PlayerData
 public class Player : MonoBehaviour, ISavable
 {
 
+    public Cam mainCamera;
     [Header("플레이어 스킬")]
     public bool _attack = false;
     public bool _dash = false;
@@ -30,7 +32,7 @@ public class Player : MonoBehaviour, ISavable
     public float attackCool = 1f;
     public Vector2 attackBoxSize;
     float hitboxDir = 0;
-    float hitboxFar = 0.5f;
+    [SerializeField] float hitboxFar = 0.5f;
     bool attackable = true;
     bool damaged = false;
     bool lockOn = false;
@@ -39,6 +41,9 @@ public class Player : MonoBehaviour, ISavable
     Vector2 lastDir = new Vector2(1, 0);
     public int coin = 0;
     public int level = 1;
+    public float knockback = 10;
+    public float knockback_time = 0.5f;
+    bool isknockback = false;
 
     [Header("대쉬")]
     public float dash_time = 0.2f;
@@ -61,7 +66,6 @@ public class Player : MonoBehaviour, ISavable
     {
         Rotate();
         Move();
-
     }
     void Update()
     {
@@ -84,18 +88,25 @@ public class Player : MonoBehaviour, ISavable
         if (Input.GetMouseButtonDown(0) && _attack && attackable)
         {
             attackable = false;
-            ExecuteFunc(() => attackable = true, attackCool);
+            bool atk = false;
+            Invoke("AttackCool", attackCool);
             Vector2 startPos = transform.position;
             if (lockOn) startPos += targetDir * hitboxFar;
             else startPos += lastDir * hitboxFar;
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position, attackBoxSize, hitboxDir);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(startPos, attackBoxSize, hitboxDir);
+
             foreach (Collider2D collider in collider2Ds)
             {
                 Debug.Log(collider.gameObject.name);
                 if (collider.gameObject.tag == "Enemy")
                 {
-                    collider.GetComponent<Enemy_>().GetDamage(normalAttackDamage);
+                    atk = true;
+                    collider.GetComponent<Enemy_>().GetDamage(normalAttackDamage, this.gameObject);
                 }
+            }
+            if (atk)
+            {
+                mainCamera.ShakingCam(0.8f, 30, 1f);
             }
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -120,6 +131,10 @@ public class Player : MonoBehaviour, ISavable
             else lockOn = false;
         }
         if (lockOn) LockedOn();
+    }
+    void AttackCool()
+    {
+        attackable = true;
     }
     void OnDrawGizmos()
     {
@@ -151,14 +166,9 @@ public class Player : MonoBehaviour, ISavable
         targetDir = (lockedTarget.transform.position - transform.position).normalized;
         hitboxDir = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
     }
-    IEnumerator ExecuteFunc(MyFunc func, float wait)
-    {
-        yield return new WaitForSeconds(wait);
-        func();
-    }
     void Move()
     {
-        if (dashing) return;
+        if (dashing || isknockback) return;
 
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
@@ -207,14 +217,22 @@ public class Player : MonoBehaviour, ISavable
             render.flipX = false;
         }
     }
-    public void GetDamage(float damage)
+
+    public void GetDamage(float damage, GameObject attacker)
     {
         if (damaged) return;
         damaged = true;
         hp -= damage;
         Debug.Log("hp:" + hp);
-
+        isknockback = true;
+        mainCamera.ShakingCam(0.8f, 20, 1f);
+        rb.AddForce((gameObject.transform.position - attacker.transform.position).normalized * knockback, ForceMode2D.Impulse);
+        Invoke("KnockbackCool", knockback_time);
         Invoke("GetDamageCool", getDamageCool);
+    }
+    void KnockbackCool()
+    {
+        isknockback = false;
     }
     void GetDamageCool()
     {

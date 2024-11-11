@@ -22,15 +22,19 @@ public class Enemy_ : MonoBehaviour
     public float damage = 1f;
     public float attackDist = 3f; // 공격범위
     public float attackDelay = 0.5f; // 공격 범위 들어오고 공격 하기까지 시간
+    public float attackAfterDelay = 0.5f; // 공격 범위 들어오고 공격 하기까지 시간
     public float attackCool = 2f; // 공격 뒤 재공격가지 쿨타임
     private bool attackAble = false;
+    private bool attackAfter = false;
+    private bool knockbacked = false;
 
     [Header("기타")]
     public bool reversed = false; // 스프라이트 좌우반전
     public float hp = 10f;
     public float getDamageCool = 1f;
     bool damaged = false;
-
+    [SerializeField] float knockback_time;
+    [SerializeField] float knockback_size = 10;
     Transform target;
     Rigidbody2D rb;
 
@@ -48,6 +52,7 @@ public class Enemy_ : MonoBehaviour
     }
     void Move()
     {
+        if (attackAfter || knockbacked) return;
         if (rb.velocity.x > 0)
             rb.GetComponent<SpriteRenderer>().flipX = reversed ? true : false;
         else if (rb.velocity.x < 0)
@@ -69,11 +74,16 @@ public class Enemy_ : MonoBehaviour
         while (true)
         {
             yield return new WaitForFixedUpdate();
-            if (Vector2.Distance(transform.position, target.position) <= attackDist && attackAble)
+            if ((Vector2.Distance(transform.position, target.position) <= attackDist) && attackAble && !knockbacked)
             {
                 yield return new WaitForSeconds(attackDelay);
                 if (Vector2.Distance(transform.position, target.position) <= attackDist)
-                    target.GetComponent<Player>().GetDamage(damage);
+                {
+                    target.GetComponent<Player>().GetDamage(damage, this.gameObject);
+                    attackAfter = true;
+                }
+                yield return new WaitForSeconds(attackAfterDelay);
+                attackAfter = false;
                 yield return new WaitForSeconds(attackCool);
             }
         }
@@ -99,6 +109,8 @@ public class Enemy_ : MonoBehaviour
     };
     void FindWayAndMove()
     {
+        if (attackAfter || knockbacked) return;
+
         int flag = 0;
         Vector2 lossy = transform.lossyScale;
         Vector2 pos = (Vector2)transform.position;
@@ -174,7 +186,8 @@ public class Enemy_ : MonoBehaviour
     }
     IEnumerator IdleMove()
     {
-        while (!isChasing)
+
+        while (!isChasing && !knockbacked)
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f));
             Vector2 moveTo = (Vector2)transform.position + new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f));
@@ -207,14 +220,22 @@ public class Enemy_ : MonoBehaviour
             }
         }
     }
-    public void GetDamage(float damage)
+    public void GetDamage(float damage, GameObject attacker)
     {
         if (damaged) return;
+        knockbacked = true;
         damaged = true;
         hp -= damage;
         Debug.Log(gameObject.name + " || hp:" + hp);
+        rb.velocity = Vector2.zero;
+        rb.AddForce((gameObject.transform.position - attacker.transform.position).normalized * knockback_size, ForceMode2D.Impulse);
 
+        Invoke("KnockbackCool", knockback_time);
         Invoke("GetDamageCool", getDamageCool);
+    }
+    void KnockbackCool()
+    {
+        knockbacked = false;
     }
     void GetDamageCool()
     {
