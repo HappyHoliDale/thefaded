@@ -174,7 +174,11 @@ QualitySettings:
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
+<<<<<<< HEAD
     useLegacyDetailDistribution: 0
+=======
+    useLegacyDetailDistribution: 1
+>>>>>>> parent of b884495 (Sorry)
     vSyncCount: 1
     realtimeGICPUUsage: 50
     lodBias: 1
@@ -223,7 +227,11 @@ QualitySettings:
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
+<<<<<<< HEAD
     useLegacyDetailDistribution: 0
+=======
+    useLegacyDetailDistribution: 1
+>>>>>>> parent of b884495 (Sorry)
     vSyncCount: 1
     realtimeGICPUUsage: 50
     lodBias: 1.5
@@ -267,12 +275,20 @@ QualitySettings:
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
     anisotropicTextures: 2
+<<<<<<< HEAD
     antiAliasing: 2
+=======
+    antiAliasing: 0
+>>>>>>> parent of b884495 (Sorry)
     softParticles: 1
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
+<<<<<<< HEAD
     useLegacyDetailDistribution: 0
+=======
+    useLegacyDetailDistribution: 1
+>>>>>>> parent of b884495 (Sorry)
     vSyncCount: 1
     realtimeGICPUUsage: 100
     lodBias: 2
@@ -303,15 +319,22 @@ QualitySettings:
   m_TextureMipmapLimitGroupNames: []
   m_PerPlatformDefaultQuality:
     Android: 2
+<<<<<<< HEAD
     EmbeddedLinux: 5
+=======
+>>>>>>> parent of b884495 (Sorry)
     GameCoreScarlett: 5
     GameCoreXboxOne: 5
     LinuxHeadlessSimulation: 5
     Nintendo Switch: 5
     PS4: 5
     PS5: 5
+<<<<<<< HEAD
     QNX: 5
     Server: 5
+=======
+    Server: 0
+>>>>>>> parent of b884495 (Sorry)
     Stadia: 5
     Standalone: 5
     VisionOS: 5
