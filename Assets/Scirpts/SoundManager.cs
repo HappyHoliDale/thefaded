@@ -93,10 +93,4 @@ public class SoundManager : MonoBehaviour
     {
         sfxSource.volume = volume;
     }
-
-    void Update()
-    {
-        Debug.Log(bgmSource.volume);
-        Debug.Log(sfxSource.volume);
-    }
 }
