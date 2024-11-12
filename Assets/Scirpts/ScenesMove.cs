@@ -21,7 +21,7 @@ public class ScenesMove : MonoBehaviour
         // 배열에서 현재 씬 인덱스에 맞는 씬 전환 함수 호출
         if (currentSceneIndex < loadSceneActions.Length)
         {
-            loadSceneActions[currentSceneIndex]();  
+            loadSceneActions[currentSceneIndex]();
         }
     }
 
