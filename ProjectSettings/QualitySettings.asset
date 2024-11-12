@@ -27,7 +27,7 @@ QualitySettings:
     softVegetation: 0
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
-    useLegacyDetailDistribution: 1
+    useLegacyDetailDistribution: 0
     vSyncCount: 0
     realtimeGICPUUsage: 25
     lodBias: 0.3
@@ -76,7 +76,7 @@ QualitySettings:
     softVegetation: 0
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
-    useLegacyDetailDistribution: 1
+    useLegacyDetailDistribution: 0
     vSyncCount: 0
     realtimeGICPUUsage: 25
     lodBias: 0.4
@@ -117,19 +117,15 @@ QualitySettings:
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 0
     skinWeights: 2
-<<<<<<< HEAD
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
-=======
-    textureQuality: 0
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
     anisotropicTextures: 1
     antiAliasing: 0
     softParticles: 0
     softVegetation: 0
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
-    useLegacyDetailDistribution: 1
+    useLegacyDetailDistribution: 0
     vSyncCount: 1
     realtimeGICPUUsage: 25
     lodBias: 0.7
@@ -170,22 +166,15 @@ QualitySettings:
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 1
     skinWeights: 2
-<<<<<<< HEAD
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
-=======
-    textureQuality: 0
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
     anisotropicTextures: 1
     antiAliasing: 0
     softParticles: 0
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
-<<<<<<< HEAD
-    useLegacyDetailDistribution: 1
-=======
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
+    useLegacyDetailDistribution: 0
     vSyncCount: 1
     realtimeGICPUUsage: 50
     lodBias: 1
@@ -226,22 +215,15 @@ QualitySettings:
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 1
     skinWeights: 4
-<<<<<<< HEAD
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
-=======
-    textureQuality: 0
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
     anisotropicTextures: 2
     antiAliasing: 2
     softParticles: 1
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
-<<<<<<< HEAD
-    useLegacyDetailDistribution: 1
-=======
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
+    useLegacyDetailDistribution: 0
     vSyncCount: 1
     realtimeGICPUUsage: 50
     lodBias: 1.5
@@ -282,24 +264,15 @@ QualitySettings:
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 1
     skinWeights: 255
-<<<<<<< HEAD
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
     anisotropicTextures: 2
-    antiAliasing: 0
-=======
-    textureQuality: 0
-    anisotropicTextures: 2
     antiAliasing: 2
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
     softParticles: 1
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
-<<<<<<< HEAD
-    useLegacyDetailDistribution: 1
-=======
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
+    useLegacyDetailDistribution: 0
     vSyncCount: 1
     realtimeGICPUUsage: 100
     lodBias: 2
@@ -330,24 +303,18 @@ QualitySettings:
   m_TextureMipmapLimitGroupNames: []
   m_PerPlatformDefaultQuality:
     Android: 2
-<<<<<<< HEAD
+    EmbeddedLinux: 5
     GameCoreScarlett: 5
     GameCoreXboxOne: 5
-    Lumin: 5
+    LinuxHeadlessSimulation: 5
     Nintendo Switch: 5
     PS4: 5
     PS5: 5
-    Server: 0
-=======
-    Lumin: 5
-    GameCoreScarlett: 5
-    GameCoreXboxOne: 5
-    Nintendo Switch: 5
-    PS4: 5
-    PS5: 5
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
+    QNX: 5
+    Server: 5
     Stadia: 5
     Standalone: 5
+    VisionOS: 5
     WebGL: 3
     Windows Store Apps: 5
     XboxOne: 5

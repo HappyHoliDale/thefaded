@@ -4,22 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-<<<<<<< HEAD
-    path: Assets/Scenes/Jiyul.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Scenes/Shami.unity
-    guid: 164edec8e688c47ceaa30afa24b2ce62
-=======
-    path: Assets/Scenes/Main.unity
-    guid: 6f7ff484e8777d94eb4e35c169591a3c
-  - enabled: 1
-    path: Assets/Scenes/SeoHyun.unity
-    guid: 3d42b9054152cd34f9dfea5bbd06b3e0
-  - enabled: 1
-    path: Assets/Scenes/Jiyul.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
+  m_Scenes: []
   m_configObjects: {}

@@ -3,50 +3,34 @@
 --- !u!30 &1
 GraphicsSettings:
   m_ObjectHideFlags: 0
-<<<<<<< HEAD
   serializedVersion: 15
-=======
-  serializedVersion: 13
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
   m_Deferred:
     m_Mode: 1
-    m_Shader: {fileID: 69, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_DeferredReflections:
     m_Mode: 1
-    m_Shader: {fileID: 74, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_ScreenSpaceShadows:
     m_Mode: 1
-    m_Shader: {fileID: 64, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_DepthNormals:
     m_Mode: 1
-    m_Shader: {fileID: 62, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_MotionVectors:
     m_Mode: 1
-    m_Shader: {fileID: 75, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_LightHalo:
     m_Mode: 1
-    m_Shader: {fileID: 105, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_LensFlare:
     m_Mode: 1
-    m_Shader: {fileID: 102, guid: 0000000000000000f000000000000000, type: 0}
+    m_Shader: {fileID: 0}
   m_VideoShadersIncludeMode: 2
-  m_AlwaysIncludedShaders:
-  - {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10783, guid: 0000000000000000f000000000000000, type: 0}
+  m_AlwaysIncludedShaders: []
   m_PreloadedShaders: []
-<<<<<<< HEAD
   m_PreloadShadersBatchTimeLimit: -1
-  m_SpritesDefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_CustomRenderPipeline: {fileID: 11400000, guid: e97e84db540e14418b32f302c4d2b299, type: 2}
-=======
-  m_SpritesDefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_SpritesDefaultMaterial: {fileID: 0}
   m_CustomRenderPipeline: {fileID: 0}
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
   m_TransparencySortMode: 0
   m_TransparencySortAxis: {x: 0, y: 0, z: 1}
   m_DefaultRenderingPath: 1
@@ -70,11 +54,7 @@ GraphicsSettings:
   m_LightsUseColorTemperature: 0
   m_DefaultRenderingLayerMask: 1
   m_LogWhenShaderIsCompiled: 0
-<<<<<<< HEAD
-  m_SRPDefaultSettings:
-    UnityEngine.Rendering.Universal.UniversalRenderPipeline: {fileID: 11400000, guid: 1286624debf4b412191b89df5255c012, type: 2}
-  m_LightProbeOutsideHullStrategy: 0
+  m_SRPDefaultSettings: {}
+  m_LightProbeOutsideHullStrategy: 1
   m_CameraRelativeLightCulling: 0
   m_CameraRelativeShadowCulling: 0
-=======
->>>>>>> parent of 7b672d9 (Main + Asset + Map)
