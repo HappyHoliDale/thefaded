@@ -61,7 +61,10 @@ public class SkillPannelScript : MonoBehaviour
     void Start()
     {
         skillTree = GameObject.Find("SkillTree").GetComponent<SkillTree>();
-        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(this.gameObject));
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+        {
+            skillTree.PnlClicked(this.gameObject);
+        });
         thisSkill = skillTree.skillTree.FindNode(skillTree.skillTree.StartNode, gameObject.name);
         skillPrice = thisSkill.price;
         skillDescription = skillTree.skillSulMyong[gameObject.name];

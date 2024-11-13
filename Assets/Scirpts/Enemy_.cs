@@ -37,9 +37,11 @@ public class Enemy_ : MonoBehaviour
     [SerializeField] float knockback_size = 10;
     Transform target;
     Rigidbody2D rb;
+    EffectManager em;
 
     void Start()
     {
+        em = GameObject.Find("GameManager").GetComponent<EffectManager>();
         target = GameObject.FindWithTag("Player").transform;
         // defaultLayerMask = LayerMask.GetMask("Default");
         rb = GetComponent<Rigidbody2D>();
@@ -228,6 +230,7 @@ public class Enemy_ : MonoBehaviour
         hp -= damage;
         Debug.Log(gameObject.name + " || hp:" + hp);
         rb.velocity = Vector2.zero;
+        em.OnAttack(transform.position.x, transform.position.y);
         rb.AddForce((gameObject.transform.position - attacker.transform.position).normalized * knockback_size, ForceMode2D.Impulse);
 
         Invoke("KnockbackCool", knockback_time);
