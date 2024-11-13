@@ -17,6 +17,7 @@ public class Skill
 
 public class SkillTree : MonoBehaviour, ISavable
 {
+    public SkillAffect skillAffect;
     public GameObject skillPannel;
     public Text coinText;
     public bool isSkillTreeLoaded = false;
@@ -294,6 +295,8 @@ public class SkillTree : MonoBehaviour, ISavable
 
         playerScript.coin -= clickedNode.price;
         clickedNode.isSold = true;
+        skillAffect.Invoke(clickedNode.name, 0);
+        //invoke로 넣자
         skill.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         // 스킬 능력 추가 코드 여따 넣을거임
     }

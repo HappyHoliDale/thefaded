@@ -20,8 +20,20 @@ public class Player : MonoBehaviour, ISavable
     [Header("플레이어 스킬")]
     public bool _attack = false;
     public bool _dash = false;
-    delegate void MyFunc();
+    public delegate void MyFunc();
     public SkillTree skillTreeScript;
+
+    [Header("스텟 증감")]
+    public float damageAdd = 0;
+    public float damageSub = 0;
+    public float damageMultiply = 1;
+    public float speedAdd = 0;
+    public float speedsub = 0;
+    public float speedMultiplay = 1;
+    public float attackCooltimeMul = 1;
+    public float dashCooltimeMul = 1;
+    public float getdmgCooltimeMul = 1;
+    public float knockbackCooltimeMul = 1;
 
 
     [Header("플레이어 상태")]
@@ -54,11 +66,17 @@ public class Player : MonoBehaviour, ISavable
 
     Rigidbody2D rb;
     SpriteRenderer render;
+    EffectManager em;
+
+    public void Func(MyFunc func)
+    {
+        func();
+    }
 
     void Awake()
     {
         Debug.Log("hp:" + hp);
-
+        em = GameObject.Find("GameManager").GetComponent<EffectManager>();
         rb = GetComponent<Rigidbody2D>();
         render = GetComponent<SpriteRenderer>();
     }
@@ -89,7 +107,7 @@ public class Player : MonoBehaviour, ISavable
         {
             attackable = false;
             bool atk = false;
-            Invoke("AttackCool", attackCool);
+            Invoke("AttackCool", attackCool * attackCooltimeMul);
             Vector2 startPos = transform.position;
             if (lockOn) startPos += targetDir * hitboxFar;
             else startPos += lastDir * hitboxFar;
@@ -196,7 +214,7 @@ public class Player : MonoBehaviour, ISavable
         yield return new WaitForSeconds(dash_time);
         dashing = false;
 
-        yield return new WaitForSeconds(dash_cooltime);
+        yield return new WaitForSeconds(dash_cooltime * dashCooltimeMul);
         dashable = true;
     }
     void Rotate()
@@ -226,9 +244,10 @@ public class Player : MonoBehaviour, ISavable
         Debug.Log("hp:" + hp);
         isknockback = true;
         mainCamera.ShakingCam(0.8f, 20, 1f);
+        em.OnAttacked(transform.position.x, transform.position.y);
         rb.AddForce((gameObject.transform.position - attacker.transform.position).normalized * knockback, ForceMode2D.Impulse);
-        Invoke("KnockbackCool", knockback_time);
-        Invoke("GetDamageCool", getDamageCool);
+        Invoke("KnockbackCool", knockback_time * knockbackCooltimeMul);
+        Invoke("GetDamageCool", getDamageCool * getdmgCooltimeMul);
     }
     void KnockbackCool()
     {
