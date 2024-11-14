@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,11 +16,24 @@ public class PlayerData
 public class Player : MonoBehaviour, ISavable
 {
 
+    public Cam mainCamera;
     [Header("플레이어 스킬")]
     public bool _attack = false;
     public bool _dash = false;
-    delegate void MyFunc();
+    public delegate void MyFunc();
     public SkillTree skillTreeScript;
+
+    [Header("스텟 증감")]
+    public float damageAdd = 0;
+    public float damageSub = 0;
+    public float damageMultiply = 1;
+    public float speedAdd = 0;
+    public float speedsub = 0;
+    public float speedMultiplay = 1;
+    public float attackCooltimeMul = 1;
+    public float dashCooltimeMul = 1;
+    public float getdmgCooltimeMul = 1;
+    public float knockbackCooltimeMul = 1;
 
 
     [Header("플레이어 상태")]
@@ -30,7 +44,7 @@ public class Player : MonoBehaviour, ISavable
     public float attackCool = 1f;
     public Vector2 attackBoxSize;
     float hitboxDir = 0;
-    float hitboxFar = 0.5f;
+    [SerializeField] float hitboxFar = 0.5f;
     bool attackable = true;
     bool damaged = false;
     bool lockOn = false;
@@ -39,6 +53,9 @@ public class Player : MonoBehaviour, ISavable
     Vector2 lastDir = new Vector2(1, 0);
     public int coin = 0;
     public int level = 1;
+    public float knockback = 10;
+    public float knockback_time = 0.5f;
+    bool isknockback = false;
 
     [Header("대쉬")]
     public float dash_time = 0.2f;
@@ -49,11 +66,17 @@ public class Player : MonoBehaviour, ISavable
 
     Rigidbody2D rb;
     SpriteRenderer render;
+    EffectManager em;
+
+    public void Func(MyFunc func)
+    {
+        func();
+    }
 
     void Awake()
     {
         Debug.Log("hp:" + hp);
-
+        em = GameObject.Find("GameManager").GetComponent<EffectManager>();
         rb = GetComponent<Rigidbody2D>();
         render = GetComponent<SpriteRenderer>();
     }
@@ -61,7 +84,6 @@ public class Player : MonoBehaviour, ISavable
     {
         Rotate();
         Move();
-
     }
     void Update()
     {
@@ -84,18 +106,25 @@ public class Player : MonoBehaviour, ISavable
         if (Input.GetMouseButtonDown(0) && _attack && attackable)
         {
             attackable = false;
-            ExecuteFunc(() => attackable = true, attackCool);
+            bool atk = false;
+            Invoke("AttackCool", attackCool * attackCooltimeMul);
             Vector2 startPos = transform.position;
             if (lockOn) startPos += targetDir * hitboxFar;
             else startPos += lastDir * hitboxFar;
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(transform.position, attackBoxSize, hitboxDir);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(startPos, attackBoxSize, hitboxDir);
+
             foreach (Collider2D collider in collider2Ds)
             {
                 Debug.Log(collider.gameObject.name);
                 if (collider.gameObject.tag == "Enemy")
                 {
-                    collider.GetComponent<Enemy_>().GetDamage(normalAttackDamage);
+                    atk = true;
+                    collider.GetComponent<Enemy_>().GetDamage(normalAttackDamage, this.gameObject);
                 }
+            }
+            if (atk)
+            {
+                mainCamera.ShakingCam(0.8f, 30, 1f);
             }
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -120,6 +149,10 @@ public class Player : MonoBehaviour, ISavable
             else lockOn = false;
         }
         if (lockOn) LockedOn();
+    }
+    void AttackCool()
+    {
+        attackable = true;
     }
     void OnDrawGizmos()
     {
@@ -151,14 +184,9 @@ public class Player : MonoBehaviour, ISavable
         targetDir = (lockedTarget.transform.position - transform.position).normalized;
         hitboxDir = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
     }
-    IEnumerator ExecuteFunc(MyFunc func, float wait)
-    {
-        yield return new WaitForSeconds(wait);
-        func();
-    }
     void Move()
     {
-        if (dashing) return;
+        if (dashing || isknockback) return;
 
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
@@ -186,7 +214,7 @@ public class Player : MonoBehaviour, ISavable
         yield return new WaitForSeconds(dash_time);
         dashing = false;
 
-        yield return new WaitForSeconds(dash_cooltime);
+        yield return new WaitForSeconds(dash_cooltime * dashCooltimeMul);
         dashable = true;
     }
     void Rotate()
@@ -207,14 +235,23 @@ public class Player : MonoBehaviour, ISavable
             render.flipX = false;
         }
     }
-    public void GetDamage(float damage)
+
+    public void GetDamage(float damage, GameObject attacker)
     {
         if (damaged) return;
         damaged = true;
         hp -= damage;
         Debug.Log("hp:" + hp);
-
-        Invoke("GetDamageCool", getDamageCool);
+        isknockback = true;
+        mainCamera.ShakingCam(0.8f, 20, 1f);
+        em.OnAttacked(transform.position.x, transform.position.y);
+        rb.AddForce((gameObject.transform.position - attacker.transform.position).normalized * knockback, ForceMode2D.Impulse);
+        Invoke("KnockbackCool", knockback_time * knockbackCooltimeMul);
+        Invoke("GetDamageCool", getDamageCool * getdmgCooltimeMul);
+    }
+    void KnockbackCool()
+    {
+        isknockback = false;
     }
     void GetDamageCool()
     {

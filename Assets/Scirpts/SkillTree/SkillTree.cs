@@ -9,13 +9,15 @@ using UnityEngine.UI;
 [Serializable]
 public class Skill
 {
-    public string SkillName, SkillParent;
+    public string SkillName, SkillParent, description;
     public int price;
+    public float xOffset;
     public Sprite SkillIcon;
 }
 
 public class SkillTree : MonoBehaviour, ISavable
 {
+    public SkillAffect skillAffect;
     public GameObject skillPannel;
     public Text coinText;
     public bool isSkillTreeLoaded = false;
@@ -30,6 +32,7 @@ public class SkillTree : MonoBehaviour, ISavable
     // public Skill FirstSkill;
     public Skill[] skills;
     Dictionary<string, Sprite> skillIcon = new();
+    public Dictionary<string, string> skillSulMyong = new();
     int maxDeepth = 0;
     const float width = 200, height = 300;
     void Start()
@@ -58,6 +61,7 @@ public class SkillTree : MonoBehaviour, ISavable
             foreach (Skill item in skills)
             {
                 skillIcon.Add(item.SkillName, item.SkillIcon);
+                skillSulMyong.Add(item.SkillName, item.description);
             }
             pointer = skillTree.StartNode.children;
         }
@@ -76,7 +80,7 @@ public class SkillTree : MonoBehaviour, ISavable
         {
             skillIcon.Add(item.SkillName, item.SkillIcon);
             if (item.SkillParent != "Null")
-                skillTree.AddSkill(item.SkillParent, item.SkillName, item.price);
+                skillTree.AddSkill(item.SkillParent, item.SkillName, item.price, item.xOffset);
         }
         return skillTree;
     }
@@ -111,84 +115,23 @@ public class SkillTree : MonoBehaviour, ISavable
             return;
         }
 
-        int dir = 1;
-        float s = 0;
-        int first = 0;
-        float isodd = (pointer.Count % 2 == 1) ? 1.5f : 1;
-
-        bool isOdd = (pointer.Count % 2 == 1) ? true : false;
-        bool isFirst = true;
-        bool isRight = true;
-        int num = 1;
 
 
         foreach (Node item in pointer)
         {
+            float s = x + item.xOffset;
+
             if (item == null)
             {
                 Debug.LogError("노드없음");
                 continue;
             }
-
-            int under = CheckUnder(item.children);
-            if (pointer.Count < 2 || isFirst && isOdd)
-            {
-                s = x;
-            }
-            else
-            {
-                if (isOdd)
-                {
-                    if (num < 4)
-                    {
-                        if (isRight)
-                        {
-                            s = width * 2 + x;
-                        }
-                        else
-                        {
-                            s = width * -2 + x;
-                        }
-                    }
-                    else
-                    {
-                        if (isRight)
-                        {
-                            s = width * (num - 1) + x;
-                        }
-                        else
-                        {
-                            s = width * -num + x;
-                        }
-                    }
-                }
-                else
-                {
-                    if (isRight)
-                    {
-                        s = width * num + x;
-                    }
-                    else
-                    {
-                        s = width * -(num - 1) + x;
-                    }
-                }
-            }
-            num++;
-            isRight = isRight ? false : true;
-            isFirst = isFirst ? false : false;
-
             NewPannel(s, deepth * height, item.name, GameObject.Find(item.parentName));
 
             if (item.children.Count != 0)
             {
                 CreatePannel(item.children, deepth + 1, s);
             }
-            if (first == 0 && isodd != 1)
-            {
-                dir--;
-            }
-            first++;
         }
     } // 겹치는거 고쳐라
 
@@ -225,14 +168,14 @@ public class SkillTree : MonoBehaviour, ISavable
     void NewPannel(float x, float y, string name, GameObject parent = null)
     {
         GameObject sp = Instantiate(skillPannel);
-        sp.transform.SetParent(posControlPannel, false);
+        sp.transform.SetParent(posControlPannel.GetChild(1), false);
         sp.transform.localPosition = new Vector2(x, y);
         sp.gameObject.name = name;
         if (skillIcon.ContainsKey(name))
             sp.GetComponent<Image>().sprite = skillIcon[name];
         if (parent != null)
         {
-            GameObject line = Instantiate(linePrefab, posControlPannel);
+            GameObject line = Instantiate(linePrefab, posControlPannel.GetChild(0));
             LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
             lineRenderer.positionCount = 2;
 
@@ -278,7 +221,7 @@ public class SkillTree : MonoBehaviour, ISavable
 
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
-            lineRenderer.transform.parent.SetParent(posControlPannel, false);
+            lineRenderer.transform.parent.SetParent(posControlPannel.GetChild(0), false);
 
 
             yield return null;
@@ -352,6 +295,8 @@ public class SkillTree : MonoBehaviour, ISavable
 
         playerScript.coin -= clickedNode.price;
         clickedNode.isSold = true;
+        skillAffect.Invoke(clickedNode.name, 0);
+        //invoke로 넣자
         skill.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         // 스킬 능력 추가 코드 여따 넣을거임
     }
@@ -373,14 +318,16 @@ public class Node
 {
     public string name;
     public int price;
+    public float xOffset;
     public bool isSold;
     public string parentName;  // parentName으로 대체
     public List<Node> children;
 
-    public Node(string name, int price)
+    public Node(string name, int price, float xSet)
     {
         this.name = name;
         this.price = price;
+        xOffset = xSet;
         isSold = false;
         children = new List<Node>();
     }
@@ -398,16 +345,16 @@ public class Tree
 
     public Tree(string startName)
     {
-        StartNode = new Node(startName, 0);
+        StartNode = new Node(startName, 0, 0);
         StartNode.parentName = null;
     }
 
-    public Node AddSkill(string parentName, string skillName, int price)
+    public Node AddSkill(string parentName, string skillName, int price, float xSet)
     {
         var parentNode = FindNode(StartNode, parentName);
         if (parentNode != null)
         {
-            var newSkillNode = new Node(skillName, price);
+            var newSkillNode = new Node(skillName, price, xSet);
             parentNode.AddChild(newSkillNode);
             return newSkillNode;
         }

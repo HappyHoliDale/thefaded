@@ -43,53 +43,52 @@
 //     }
 // }
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Collections.Generic;
-using UnityEngine.UIElements;
 using TMPro;
+using UnityEngine.SocialPlatforms;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
 
 public class SkillPannelScript : MonoBehaviour
 {
     SkillTree skillTree;
-    public TextMeshProUGUI skillInfoPannel;
-    private TextMeshProUGUI skillInfo;
+    public GameObject skillInfoPannel;
+    // name price desc
+    private GameObject skillInfo = null;
+    Node thisSkill;
+    private int skillPrice;
+    private string skillDescription;
 
     void Start()
     {
         skillTree = GameObject.Find("SkillTree").GetComponent<SkillTree>();
-        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => skillTree.PnlClicked(this.gameObject));
-        // foreach (Skill item in skillTree.skills)
-        // {
-        //     if (item.SkillName == gameObject.name)
-        //     {
-        //     }
-        // }
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+        {
+            skillTree.PnlClicked(this.gameObject);
+        });
+        thisSkill = skillTree.skillTree.FindNode(skillTree.skillTree.StartNode, gameObject.name);
+        skillPrice = thisSkill.price;
+        skillDescription = skillTree.skillSulMyong[gameObject.name];
+    }
+    public void OnHover()
+    {
+        Debug.Log("hovering");
+        Vector3 translate = new Vector3(350, -300);
+        if (skillInfo == null)
+        {
+            skillInfo = Instantiate(skillInfoPannel, transform);
+            skillInfo.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = gameObject.name;
+            skillInfo.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = skillPrice.ToString();
+            skillInfo.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = skillDescription;
+            skillInfo.transform.SetAsLastSibling();
+        }
+        skillInfo.transform.localPosition = translate;
+
     }
 
-    void Update()
+    public void OnHoverOut()
     {
-        CheckHover();
-    }
-    void CheckHover()
-    {
-        Vector3 a = Input.mousePosition;
-        Vector3 translate = new Vector3(100, -100);
-        // Debug.Log(a + " || " + transform.position + " >>>>" + Vector3.Distance(a, transform.position) + "||>> " + gameObject.name);
-
-        if (Vector3.Distance(a, transform.position) < 100)
-        {
-
-            if (skillInfo == null)
-                skillInfo = Instantiate(skillInfoPannel, transform);
-            skillInfo.transform.position = a + translate;
-            skillInfo.text = gameObject.name;
-            // Debug.Log("dd");
-        }
-        else
-        {
-            if (skillInfo != null)
-                Destroy(skillInfo);
-        }
+        Debug.Log("onExit");
+        if (skillInfo != null)
+            Destroy(skillInfo.gameObject);
     }
 }
